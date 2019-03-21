@@ -12,7 +12,7 @@ var _ = Describe("TimeSortedList", func() {
 	Describe("NewTimeSortedList", func() {
 		It("should create len 10 list", func() {
 			tsl := NewTimeSortedList(10)
-			Expect(tsl.Length()).To(Equal(10))
+			Expect(tsl.Len()).To(Equal(10))
 		})
 	})
 })
