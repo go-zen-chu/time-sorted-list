@@ -109,6 +109,7 @@ func (tsl *timeSortedList) GetItem(idx int) *TimeItem {
 }
 
 func (tsl *timeSortedList) GetItemsFrom(fromUnixTime int64) []TimeItem {
+	//TODO: still needs to be implemented
 	idx := sort.Search(len(tsl.dataList), func(i int) bool {
 		return fromUnixTime <= tsl.dataList[i].UnixTime
 	})
@@ -116,6 +117,7 @@ func (tsl *timeSortedList) GetItemsFrom(fromUnixTime int64) []TimeItem {
 }
 
 func (tsl *timeSortedList) GetItemsUntil(untilUnixTime int64) []TimeItem {
+	//TODO: still needs to be implemented
 	idx := sort.Search(len(tsl.dataList), func(i int) bool {
 		return tsl.dataList[i].UnixTime <= untilUnixTime
 	})
@@ -123,6 +125,7 @@ func (tsl *timeSortedList) GetItemsUntil(untilUnixTime int64) []TimeItem {
 }
 
 func (tsl *timeSortedList) GetItemsFromUntil(fromUnixTime, untilUnixTime int64) []TimeItem {
+	//TODO: still needs to be implemented
 	if fromUnixTime >= untilUnixTime {
 		return nil
 	}
