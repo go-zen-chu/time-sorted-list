@@ -1,4 +1,4 @@
-package timesortedlist_test
+package timesortedlist
 
 import (
 	"testing"
