@@ -5,8 +5,9 @@ import "sort"
 type TimeSortedList interface {
 	sort.Interface
 	AddItem(unixTime int64, item interface{})
-	AddTimeItem(item TimeItem)
+	AddTimeItem(item *TimeItem)
 	Filled() bool
+	Cap() int
 }
 
 type TimeItem struct {
@@ -26,19 +27,25 @@ func NewTimeSortedList(capacity int) TimeSortedList {
 	}
 }
 
-// Len(): implementation for sort.Interface
+// Len: implementation for sort.Interface
 func (tsl *timeSortedList) Len() int {
 	return len(tsl.dataList)
 }
 
+// Less: implementation for sort.Interface
 func (tsl *timeSortedList) Less(i, j int) bool {
 	return tsl.dataList[i].UnixTime <= tsl.dataList[j].UnixTime
 }
 
+// Swap: implementation for sort.Interface
 func (tsl *timeSortedList) Swap(i, j int) {
 	tmp := tsl.dataList[i]
 	tsl.dataList[i] = tsl.dataList[j]
 	tsl.dataList[j] = tmp
+}
+
+func (tsl *timeSortedList) Cap() int {
+	return cap(tsl.dataList)
 }
 
 func (tsl *timeSortedList) AddItem(unixTime int64, item interface{}) {
@@ -54,9 +61,9 @@ func (tsl *timeSortedList) AddTimeItem(item *TimeItem) {
 
 	} else if len(tsl.dataList) == 0 {
 		// if empty just add
-		tsl.dataList = append(tsl.dataList, item)
+		tsl.dataList = append(tsl.dataList, *item)
 	} else {
-		tsl.dataList = append(tsl.dataList, item)
+		tsl.dataList = append(tsl.dataList, *item)
 		// TODO: should be inserted more wisely
 		sort.Sort(tsl)
 	}
