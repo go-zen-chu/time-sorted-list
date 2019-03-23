@@ -37,7 +37,7 @@ var (
 	}
 )
 
-func genSampleTimeSortedList() TimeSortedList {
+func genSampleTimeSortedList() ITimeSortedList {
 	tsl := NewTimeSortedList(5)
 	for _, ti := range sampleTimeItems {
 		tsl.AddTimeItem(&ti)

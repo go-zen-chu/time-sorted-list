@@ -1,30 +1,27 @@
 /*
-Package timesortedlist is a package of a data structure storing time series data
+Package timesortedlist is a package of a data structure storing time series data.
+It's goal is to store data such as logs, sequence, ... that should be ordered.
 
-## What this data structure for?
+Feature
 
-- in memory time series data store
-- any data sorted in time series
-- query data using from or until in unixtime
+  - in memory time series data store
+  - any data sorted in time series
+  - query data using from or until in unixtime
 
-## Usage
+Usage
 
-### Searching data through unixtime
+Here is a simple usage.
+
+Add item
+
+When you add item, this list will automatically sort.
+  tsl.AddItem(unixTime, timeItem)
+
+Searching data through unixtime
 
 Since this data structure intented to store time series data, it has abilty to search item via unix time.
-
-```
-timeItems := tsl.GetItemsFrom(unixTime)
-timeItems := tsl.GetItemsUntil(unixTime)
-```
-
-### Add item
-
-When you add item, it will automatically sort
-
-```
-tsl.AddItem(unixTime, timeItem)
-```
+  timeItems := tsl.GetItemsFrom(unixTime)
+  timeItems := tsl.GetItemsUntil(unixTime)
 */
 package timesortedlist
 
@@ -32,9 +29,9 @@ import (
 	"sort"
 )
 
-// TimeSortedList holds time series items which are sorted.
-// Inserted items can be obtained by specifying unix time.
-type TimeSortedList interface {
+// ITimeSortedList is a interface of TimeSortedList.
+// Use for mocking in your test.
+type ITimeSortedList interface {
 	Len() int
 	Cap() int
 	AddItem(unixTime int64, item interface{})
@@ -52,34 +49,36 @@ type TimeItem struct {
 	Item     interface{}
 }
 
-type timeSortedList struct {
+// TimeSortedList holds time series items which are sorted.
+// Inserted items can be obtained by specifying unix time.
+type TimeSortedList struct {
 	dataList []TimeItem
 	capacity int
 }
 
 // NewTimeSortedList initializes TimeSortedList.
-// capacity is
-func NewTimeSortedList(capacity int) TimeSortedList {
+// capacity is the max size of internal slice for not using more memory.
+func NewTimeSortedList(capacity int) ITimeSortedList {
 	l := make([]TimeItem, 0, capacity)
-	return &timeSortedList{
+	return &TimeSortedList{
 		dataList: l,
 		capacity: capacity,
 	}
 }
 
 // Len gets actual length of list.
-func (tsl *timeSortedList) Len() int {
+func (tsl *TimeSortedList) Len() int {
 	return len(tsl.dataList)
 }
 
 // Cap gets initialized capacity.
 // If length of list is same as Cap then the list is filled.
-func (tsl *timeSortedList) Cap() int {
+func (tsl *TimeSortedList) Cap() int {
 	return tsl.capacity
 }
 
 // AddItem adds any structure with specified time.
-func (tsl *timeSortedList) AddItem(unixTime int64, item interface{}) {
+func (tsl *TimeSortedList) AddItem(unixTime int64, item interface{}) {
 	ti := &TimeItem{
 		UnixTime: unixTime,
 		Item:     item,
@@ -88,7 +87,7 @@ func (tsl *timeSortedList) AddItem(unixTime int64, item interface{}) {
 }
 
 // AddTimeItem adds TimeItem with time ordered.
-func (tsl *timeSortedList) AddTimeItem(item *TimeItem) {
+func (tsl *TimeSortedList) AddTimeItem(item *TimeItem) {
 	if tsl.Filled() {
 		oldestItem := tsl.dataList[0]
 		if item.UnixTime < oldestItem.UnixTime {
@@ -125,13 +124,13 @@ func (tsl *timeSortedList) AddTimeItem(item *TimeItem) {
 }
 
 // Filled checks if the list is filled.
-func (tsl *timeSortedList) Filled() bool {
+func (tsl *TimeSortedList) Filled() bool {
 	// by comparing with defined capacity, make the list fix sized
 	return len(tsl.dataList) == tsl.capacity
 }
 
 // GetItem gets item with specified index.
-func (tsl *timeSortedList) GetItem(idx int) *TimeItem {
+func (tsl *TimeSortedList) GetItem(idx int) *TimeItem {
 	if len(tsl.dataList) == 0 || len(tsl.dataList) <= idx {
 		// empty or out of range
 		return nil
@@ -140,15 +139,15 @@ func (tsl *timeSortedList) GetItem(idx int) *TimeItem {
 }
 
 // GetItemsFrom gets item from specified time
-func (tsl *timeSortedList) GetItemsFrom(fromUnixTime int64) []TimeItem {
+func (tsl *TimeSortedList) GetItemsFrom(fromUnixTime int64) []TimeItem {
 	idx := sort.Search(len(tsl.dataList), func(i int) bool {
 		return fromUnixTime <= tsl.dataList[i].UnixTime
 	})
 	return tsl.dataList[idx:]
 }
 
-// GetItemsFromUntil gets item until specified time
-func (tsl *timeSortedList) GetItemsUntil(untilUnixTime int64) []TimeItem {
+// GetItemsUntil gets item until specified time
+func (tsl *TimeSortedList) GetItemsUntil(untilUnixTime int64) []TimeItem {
 	idx := sort.Search(len(tsl.dataList), func(i int) bool {
 		// get index where it surpass until time
 		return untilUnixTime < tsl.dataList[i].UnixTime
@@ -157,7 +156,7 @@ func (tsl *timeSortedList) GetItemsUntil(untilUnixTime int64) []TimeItem {
 }
 
 // GetItemsFromUntil get items with specified time range
-func (tsl *timeSortedList) GetItemsFromUntil(fromUnixTime, untilUnixTime int64) []TimeItem {
+func (tsl *TimeSortedList) GetItemsFromUntil(fromUnixTime, untilUnixTime int64) []TimeItem {
 	if fromUnixTime >= untilUnixTime {
 		return make([]TimeItem, 0)
 	}
