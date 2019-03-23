@@ -113,22 +113,86 @@ var _ = Describe("TimeSortedList", func() {
 	})
 
 	Describe("GetItem", func() {
+		tsl := genSampleTimeSortedList()
+
 		It("should get item in range", func() {
-			tsl := genSampleTimeSortedList()
 			ti := tsl.GetItem(0)
 			Expect(ti.Item.(sampleStruct).sample).To(Equal("sample"))
 		})
 
 		It("should get nil if TimeSortedList is empty", func() {
-			tsl := NewTimeSortedList(3)
-			ti := tsl.GetItem(0)
+			emptyTsl := NewTimeSortedList(3)
+			ti := emptyTsl.GetItem(0)
 			Expect(ti).To(BeNil())
 		})
 
 		It("should get index is out of range", func() {
-			tsl := genSampleTimeSortedList()
 			ti := tsl.GetItem(100)
 			Expect(ti).To(BeNil())
+		})
+	})
+
+	Describe("GetItemsFrom", func() {
+		tsl := genSampleTimeSortedList()
+		It("should get item from specified time", func() {
+			tis := tsl.GetItemsFrom(nowUnixTime + 2)
+			Expect(len(tis)).To(Equal(3))
+			Expect(tis[0].Item.(sampleStruct).sample).To(Equal("sample2"))
+			Expect(tis[1].Item.(sampleStruct).sample).To(Equal("sample3"))
+		})
+
+		It("should get all items if from time is older than any items", func() {
+			tis := tsl.GetItemsFrom(nowUnixTime - 100)
+			Expect(len(tis)).To(Equal(5))
+			Expect(tis[0].Item.(sampleStruct).sample).To(Equal("sample"))
+		})
+
+		It("should get empty array if from time is newer than any items", func() {
+			tis := tsl.GetItemsFrom(nowUnixTime + 100)
+			Expect(len(tis)).To(Equal(0))
+		})
+	})
+
+	Describe("GetItemsUntil", func() {
+		tsl := genSampleTimeSortedList()
+		It("should get item until specified time", func() {
+			tis := tsl.GetItemsUntil(nowUnixTime + 2)
+			Expect(len(tis)).To(Equal(3))
+			Expect(tis[0].Item.(sampleStruct).sample).To(Equal("sample"))
+			Expect(tis[1].Item.(sampleStruct).sample).To(Equal("sample1"))
+		})
+
+		It("should get empty array if until time is older than any items", func() {
+			tis := tsl.GetItemsUntil(nowUnixTime - 100)
+			Expect(len(tis)).To(Equal(0))
+		})
+
+		It("should get all items if until time is newer than any items", func() {
+			tis := tsl.GetItemsUntil(nowUnixTime + 100)
+			Expect(len(tis)).To(Equal(5))
+			Expect(tis[0].Item.(sampleStruct).sample).To(Equal("sample"))
+		})
+	})
+
+	Describe("GetItemsFromUntil", func() {
+		tsl := genSampleTimeSortedList()
+
+		It("should get empty array if from time is newer than until time", func() {
+			tis := tsl.GetItemsFromUntil(nowUnixTime+2, nowUnixTime)
+			Expect(len(tis)).To(Equal(0))
+		})
+
+		It("should get items from and until specified time", func() {
+			tis := tsl.GetItemsFromUntil(nowUnixTime+1, nowUnixTime+3)
+			Expect(len(tis)).To(Equal(3))
+			Expect(tis[0].Item.(sampleStruct).sample).To(Equal("sample1"))
+			Expect(tis[2].Item.(sampleStruct).sample).To(Equal("sample3"))
+		})
+
+		It("should get items array when until time is newer than any items", func() {
+			tis := tsl.GetItemsFromUntil(nowUnixTime+3, nowUnixTime+100)
+			Expect(len(tis)).To(Equal(2))
+			Expect(tis[1].Item.(sampleStruct).sample).To(Equal("sample4"))
 		})
 	})
 })
