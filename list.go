@@ -1,6 +1,8 @@
 package timesortedlist
 
-import "sort"
+import (
+	"sort"
+)
 
 // TimeSortedList : Has time series items which are sorted
 type TimeSortedList interface {
@@ -109,7 +111,6 @@ func (tsl *timeSortedList) GetItem(idx int) *TimeItem {
 }
 
 func (tsl *timeSortedList) GetItemsFrom(fromUnixTime int64) []TimeItem {
-	//TODO: still needs to be implemented
 	idx := sort.Search(len(tsl.dataList), func(i int) bool {
 		return fromUnixTime <= tsl.dataList[i].UnixTime
 	})
@@ -117,23 +118,22 @@ func (tsl *timeSortedList) GetItemsFrom(fromUnixTime int64) []TimeItem {
 }
 
 func (tsl *timeSortedList) GetItemsUntil(untilUnixTime int64) []TimeItem {
-	//TODO: still needs to be implemented
 	idx := sort.Search(len(tsl.dataList), func(i int) bool {
-		return tsl.dataList[i].UnixTime <= untilUnixTime
+		// get index where it surpass until time
+		return untilUnixTime < tsl.dataList[i].UnixTime
 	})
 	return tsl.dataList[:idx]
 }
 
 func (tsl *timeSortedList) GetItemsFromUntil(fromUnixTime, untilUnixTime int64) []TimeItem {
-	//TODO: still needs to be implemented
 	if fromUnixTime >= untilUnixTime {
-		return nil
+		return make([]TimeItem, 0)
 	}
 	fIdx := sort.Search(len(tsl.dataList), func(i int) bool {
 		return fromUnixTime <= tsl.dataList[i].UnixTime
 	})
 	uIdx := sort.Search(len(tsl.dataList), func(i int) bool {
-		return tsl.dataList[i].UnixTime <= untilUnixTime
+		return untilUnixTime < tsl.dataList[i].UnixTime
 	})
 	return tsl.dataList[fIdx:uIdx]
 }
