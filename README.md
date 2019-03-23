@@ -1,9 +1,9 @@
 # time-sorted-list
 
 [![CircleCI](https://circleci.com/gh/go-zen-chu/time-sorted-list.svg?style=svg)](https://circleci.com/gh/go-zen-chu/time-sorted-list)
-[![Go Report Card](https://goreportcard.com/badge/https://godoc.org/github.com/go-zen-chu/time-sorted-list)](https://goreportcard.com/report/https://godoc.org/github.com/go-zen-chu/time-sorted-list)
-[![Documentation](https://godoc.org/https://godoc.org/github.com/go-zen-chu/time-sorted-list?status.svg)](http://godoc.org/https://godoc.org/github.com/go-zen-chu/time-sorted-list)
-[![GitHub issues](https://img.shields.io/github/issues/yangwenmai/how-to-add-badge-in-github-readme.svg)](https://https://godoc.org/github.com/go-zen-chu/time-sorted-list/issues)
+[![Go Report Card](https://goreportcard.com/badge/github.com/go-zen-chu/time-sorted-list)](https://goreportcard.com/report/github.com/go-zen-chu/time-sorted-list)
+[![Documentation](https://godoc.org/github.com/go-zen-chu/time-sorted-list?status.svg)](http://godoc.org/github.com/go-zen-chu/time-sorted-list)
+[![GitHub issues](https://img.shields.io/github/issues/yangwenmai/how-to-add-badge-in-github-readme.svg)](https://github.com/go-zen-chu/time-sorted-list/issues)
 
 Time sorted list in Golang.
 
