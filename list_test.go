@@ -75,6 +75,26 @@ var _ = Describe("TimeSortedList", func() {
 			Expect(tsl.GetItem(2).Item.(sampleStruct).sample).To(Equal("sample3"))
 		})
 
+		It("should insert items without changing capacity", func() {
+			tsl := genSampleTimeSortedList()
+			tsl.AddTimeItem(&TimeItem{
+				UnixTime: nowUnixTime + 3,
+				Item: sampleStruct{
+					sample: "sample3 new",
+				},
+			})
+			tsl.AddTimeItem(&TimeItem{
+				UnixTime: nowUnixTime + 1,
+				Item: sampleStruct{
+					sample: "sample1 new",
+				},
+			})
+			Expect(tsl.GetItem(0).Item.(sampleStruct).sample).To(Equal("sample1 new"))
+			Expect(tsl.GetItem(1).Item.(sampleStruct).sample).To(Equal("sample2"))
+			Expect(tsl.GetItem(3).Item.(sampleStruct).sample).To(Equal("sample3 new"))
+			Expect(tsl.GetItem(4).Item.(sampleStruct).sample).To(Equal("sample4"))
+		})
+
 		It("should remove old item if new one added", func() {
 			tsl := genSampleTimeSortedList()
 			tsl.AddTimeItem(&TimeItem{
