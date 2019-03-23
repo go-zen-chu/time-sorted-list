@@ -6,11 +6,11 @@ import (
 
 // TimeSortedList : Has time series items which are sorted
 type TimeSortedList interface {
-	sort.Interface
+	Len() int
+	Cap() int
 	AddItem(unixTime int64, item interface{})
 	AddTimeItem(item *TimeItem)
 	Filled() bool
-	Cap() int
 	GetItem(idx int) *TimeItem
 	GetItemsFrom(fromUnixTime int64) []TimeItem
 	GetItemsUntil(untilUnixTime int64) []TimeItem
@@ -37,21 +37,8 @@ func NewTimeSortedList(capacity int) TimeSortedList {
 	}
 }
 
-// Len: implementation for sort.Interface
 func (tsl *timeSortedList) Len() int {
 	return len(tsl.dataList)
-}
-
-// Less: implementation for sort.Interface
-func (tsl *timeSortedList) Less(i, j int) bool {
-	return tsl.dataList[i].UnixTime <= tsl.dataList[j].UnixTime
-}
-
-// Swap: implementation for sort.Interface
-func (tsl *timeSortedList) Swap(i, j int) {
-	tmp := tsl.dataList[i]
-	tsl.dataList[i] = tsl.dataList[j]
-	tsl.dataList[j] = tmp
 }
 
 func (tsl *timeSortedList) Cap() int {
@@ -68,31 +55,37 @@ func (tsl *timeSortedList) AddItem(unixTime int64, item interface{}) {
 
 func (tsl *timeSortedList) AddTimeItem(item *TimeItem) {
 	if tsl.Filled() {
-		oldItem := tsl.dataList[0]
-		if oldItem.UnixTime > item.UnixTime {
+		oldestItem := tsl.dataList[0]
+		if item.UnixTime < oldestItem.UnixTime {
 			// if new item is older than oldest item, ignore
 			return
 		} else {
 			// drop oldest item without changing capacity
+			idx := sort.Search(len(tsl.dataList), func(i int) bool {
+				return item.UnixTime < tsl.dataList[i].UnixTime
+			})
 			for i := 0; i < tsl.capacity; i++ {
-				if i < tsl.capacity-1 {
-					// shift to front
-					tsl.dataList[i] = tsl.dataList[i+1]
-				} else {
-					// insert to last
+				if i == idx {
+					tsl.dataList[idx-1] = *item
+					break // finished inserting. no need to shift
+				} else if i == tsl.capacity-1 {
+					// if it comes to last, just add item
 					tsl.dataList[i] = *item
+				} else {
+					tsl.dataList[i] = tsl.dataList[i+1]
 				}
 			}
-			// TODO: should be inserted more wisely
-			sort.Sort(tsl)
 		}
 	} else if len(tsl.dataList) == 0 {
 		// if empty just add
 		tsl.dataList = append(tsl.dataList, *item)
 	} else {
-		tsl.dataList = append(tsl.dataList, *item)
-		// TODO: should be inserted more wisely
-		sort.Sort(tsl)
+		// insert **after** same unix time item
+		idx := sort.Search(len(tsl.dataList), func(i int) bool {
+			return item.UnixTime < tsl.dataList[i].UnixTime
+		})
+		tsl.dataList = append(tsl.dataList[:idx+1], tsl.dataList[idx:]...)
+		tsl.dataList[idx] = *item
 	}
 }
 
