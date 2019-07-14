@@ -21,7 +21,7 @@ and requires only standard package
 
 ### Searching data through unixtime
 
-Since this data structure intented to store time series data, it has abilty to search item via unix time.
+Since this data structure intented to store time series data, it has ability to search item via unix time.
 
 ```
 timeItems := tsl.GetItemsFrom(unixTime)
