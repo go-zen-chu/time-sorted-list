@@ -3,7 +3,7 @@
 [![CircleCI](https://circleci.com/gh/go-zen-chu/time-sorted-list.svg?style=svg)](https://circleci.com/gh/go-zen-chu/time-sorted-list)
 [![Go Report Card](https://goreportcard.com/badge/github.com/go-zen-chu/time-sorted-list)](https://goreportcard.com/report/github.com/go-zen-chu/time-sorted-list)
 [![Documentation](https://godoc.org/github.com/go-zen-chu/time-sorted-list?status.svg)](http://godoc.org/github.com/go-zen-chu/time-sorted-list)
-[![GitHub issues](https://img.shields.io/github/issues/yangwenmai/how-to-add-badge-in-github-readme.svg)](https://github.com/go-zen-chu/time-sorted-list/issues)
+[![GitHub issues](https://img.shields.io/github/issues/go-zen-chu/time-sorted-list.svg)](https://github.com/go-zen-chu/time-sorted-list/issues)
 
 Time sorted list in Golang.
 
